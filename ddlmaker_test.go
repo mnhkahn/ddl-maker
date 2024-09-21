@@ -14,6 +14,7 @@ import (
 	"github.com/nao1215/ddl-maker/dialect/mock"
 	"github.com/nao1215/ddl-maker/dialect/mysql"
 	"github.com/nao1215/ddl-maker/dialect/sqlite"
+	"github.com/stretchr/testify/assert"
 )
 
 type TestOne struct {
@@ -329,7 +330,7 @@ func TestGenerate2(t *testing.T) {
 		if got == nil {
 			t.Fatal("template execute error did not occure")
 		}
-		if !errors.As(got, &want) {
+		if !errors.Is(got, want) {
 			t.Errorf("mismatch want:%v, got:%v", want, got)
 		}
 	})
@@ -496,4 +497,20 @@ func TestDDLMaker_GenerateForSQLite(t *testing.T) {
 			t.Errorf("Compare value is mismatch (-want +got):%s\n", diff)
 		}
 	})
+}
+
+func TestJSON(t *testing.T) {
+	conf := Config{
+		DB: DBConfig{
+			Driver:  "mysql",
+			Engine:  "InnoDB",
+			Charset: "utf8mb4",
+		},
+	}
+
+	dm, err := New(conf)
+	assert.Nil(t, err)
+	res, err := dm.GenerateJSON(`{"a":1}`)
+	assert.Nil(t, err)
+	t.Log(string(res))
 }

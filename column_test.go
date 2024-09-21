@@ -166,7 +166,7 @@ func TestToSQL(t *testing.T) {
 		if got == nil {
 			t.Fatal("type name is unknown. however, error did not occure")
 		}
-		if !errors.As(got, &mysql.ErrInvalidType) {
+		if !errors.Is(got, mysql.ErrInvalidType) {
 			t.Errorf("mismatch: want=%v, got=%v", mysql.ErrInvalidType, got)
 		}
 	})

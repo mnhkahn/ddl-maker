@@ -1,6 +1,7 @@
 package ddlmaker
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -72,6 +73,26 @@ func (dm *DDLMaker) AddStruct(ss ...interface{}) error {
 	}
 
 	return nil
+}
+
+// Generate ddl file
+func (dm *DDLMaker) GenerateJSON(json string) ([]byte, error) {
+	log.Printf("start generate %s \n", dm.config.OutFilePath)
+	err := dm.parseJSON(json)
+	if err != nil {
+		return nil, err // This pass will not go through.
+	}
+
+	res := bytes.NewBuffer(nil)
+
+	err = dm.generate(res)
+	if err != nil {
+		return nil, fmt.Errorf("error generate: %w", err)
+	}
+
+	log.Printf("done generate %s \n", dm.config.OutFilePath)
+
+	return res.Bytes(), nil
 }
 
 // Generate ddl file

@@ -1,11 +1,14 @@
 package ddlmaker
 
 import (
+	"encoding/json"
 	"fmt"
+	"math"
 	"reflect"
 	"strings"
 
 	"github.com/nao1215/ddl-maker/dialect"
+	"github.com/nao1215/ddl-maker/dialect/mysql"
 	"github.com/nao1215/nameconv"
 )
 
@@ -27,6 +30,42 @@ type ForeignKey interface {
 // Index is for type assertion
 type Index interface {
 	Indexes() dialect.Indexes
+}
+
+func (dm *DDLMaker) parseJSON(data string) error {
+	m := make(map[string]interface{}, 10)
+	err := json.Unmarshal([]byte(data), &m)
+	if err != nil {
+		return err
+	}
+	cols := make([]dialect.Column, 0, len(m))
+	for k, v := range m {
+		typeName := typeForValue(v, true)
+		col := newColumn(nameconv.ToSnakeCase(k), typeName, "", dm.Dialect)
+		cols = append(cols, col)
+	}
+	table := newTable("foo", mysql.AddPrimaryKey("id"), nil, cols, nil, dm.Dialect)
+	dm.Tables = append(dm.Tables, table)
+
+	return nil
+}
+
+func typeForValue(value interface{}, convertFloats bool) string {
+	v := reflect.TypeOf(value).Name()
+	if v == "float64" && convertFloats {
+		v = disambiguateFloatInt(value)
+	}
+	return v
+}
+
+func disambiguateFloatInt(value interface{}) string {
+	const epsilon = .0001
+	vfloat := value.(float64)
+	if math.Abs(vfloat-math.Floor(vfloat+epsilon)) < epsilon {
+		var tmp int64
+		return reflect.TypeOf(tmp).Name()
+	}
+	return reflect.TypeOf(value).Name()
 }
 
 func (dm *DDLMaker) parse() error {

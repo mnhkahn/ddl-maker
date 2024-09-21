@@ -1,4 +1,4 @@
-module github.com/nao1215/ddl-maker
+module github.com/mnhkahn/ddl-maker
 
 go 1.18
 

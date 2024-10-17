@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/nao1215/ddl-maker/query"
+	"github.com/mnhkahn/ddl-maker/query"
 )
 
 const (
@@ -220,7 +220,7 @@ func (mysql MySQL) ToSQL(typeName string, size uint64) (string, error) {
 	}
 }
 
-// Quote encloses the string with ``.
+// Quote encloses the string with “.
 func (mysql MySQL) Quote(s string) string {
 	return query.Quote(s)
 }

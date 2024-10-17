@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/nao1215/ddl-maker/dialect"
-	"github.com/nao1215/ddl-maker/dialect/mysql"
+	"github.com/mnhkahn/ddl-maker/dialect"
+	"github.com/mnhkahn/ddl-maker/dialect/mysql"
 )
 
 type User struct {

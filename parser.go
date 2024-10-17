@@ -7,8 +7,10 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/nao1215/ddl-maker/dialect"
-	"github.com/nao1215/ddl-maker/dialect/mysql"
+	"github.com/bournex/ordered_container"
+	"github.com/mnhkahn/ddl-maker/dialect"
+	"github.com/mnhkahn/ddl-maker/dialect/mysql"
+	"github.com/mnhkahn/gogogo/logger"
 	"github.com/nao1215/nameconv"
 )
 
@@ -33,16 +35,30 @@ type Index interface {
 }
 
 func (dm *DDLMaker) parseJSON(data string) error {
-	m := make(map[string]interface{}, 10)
+	// m := make(map[string]interface{}, 10)
+	m := ordered_container.OrderedMap{}
 	err := json.Unmarshal([]byte(data), &m)
 	if err != nil {
 		return err
 	}
 	cols := make([]dialect.Column, 0, len(m))
-	for k, v := range m {
+	idExists := false
+	for _, values := range m.Values {
+		k := values.Key
+		v := values.Value
 		typeName := typeForValue(v, true)
+		if typeName == "id" {
+			idExists = true
+		}
+		if typeName == "" {
+			continue
+		}
+		logger.Info(k, typeName)
 		col := newColumn(nameconv.ToSnakeCase(k), typeName, "", dm.Dialect)
 		cols = append(cols, col)
+	}
+	if !idExists {
+		cols = append(cols, newColumn("id", "int64", "", dm.Dialect))
 	}
 	table := newTable("foo", mysql.AddPrimaryKey("id"), nil, cols, nil, dm.Dialect)
 	dm.Tables = append(dm.Tables, table)

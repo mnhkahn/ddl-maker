@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/nao1215/ddl-maker/dialect"
+	"github.com/mnhkahn/ddl-maker/dialect"
 )
 
 // column is the model for mapping structure field to table column.
@@ -76,6 +76,7 @@ func (c column) attribute() string {
 	if _, ok := specs["auto"]; ok {
 		attributes = append(attributes, c.dialect.AutoIncrement())
 	}
+	attributes = append(attributes, fmt.Sprintf(`COMMENT '%s'`, c.Name()))
 
 	return strings.Join(attributes, " ")
 }

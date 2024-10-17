@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"text/template"
 
-	"github.com/nao1215/ddl-maker/dialect"
+	"github.com/mnhkahn/ddl-maker/dialect"
 	"github.com/pkg/errors"
 )
 

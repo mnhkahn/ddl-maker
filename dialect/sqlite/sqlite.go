@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/nao1215/ddl-maker/query"
+	"github.com/mnhkahn/ddl-maker/query"
 )
 
 // ErrInvalidType means Invalid type specified when parsing
@@ -31,7 +31,6 @@ func (sqlite SQLite) FooterTemplate() string {
 }
 
 // TableTemplate return string that is sql table template.
-//
 func (sqlite SQLite) TableTemplate() string {
 	return `
 DROP TABLE IF EXISTS {{ .Name }};
@@ -113,7 +112,7 @@ func (sqlite SQLite) ToSQL(typeName string, size uint64) (string, error) {
 	}
 }
 
-// Quote return string that encloses with ``.
+// Quote return string that encloses with “.
 func (sqlite SQLite) Quote(s string) string {
 	return query.Quote(s)
 }

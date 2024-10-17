@@ -4,8 +4,8 @@ import (
 	"flag"
 	"log"
 
-	ddlmaker "github.com/nao1215/ddl-maker"
-	ex "github.com/nao1215/ddl-maker/_example"
+	ex "github.com/mnhkahn/ddl-maker/_example"
+	ddlmaker "github.com/mnkhahn/ddl-maker"
 )
 
 func main() {

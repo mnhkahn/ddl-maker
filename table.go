@@ -1,7 +1,7 @@
 package ddlmaker
 
 import (
-	"github.com/nao1215/ddl-maker/dialect"
+	"github.com/mnhkahn/ddl-maker/dialect"
 )
 
 // Table is mapping struct info

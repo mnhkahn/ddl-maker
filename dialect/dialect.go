@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/nao1215/ddl-maker/dialect/mysql"
-	"github.com/nao1215/ddl-maker/dialect/sqlite"
+	"github.com/mnhkahn/ddl-maker/dialect/mysql"
+	"github.com/mnhkahn/ddl-maker/dialect/sqlite"
 )
 
 // Dialect is interface that eliminates differences in DB drivers.

@@ -10,7 +10,6 @@ import (
 	"github.com/bournex/ordered_container"
 	"github.com/mnhkahn/ddl-maker/dialect"
 	"github.com/mnhkahn/ddl-maker/dialect/mysql"
-	"github.com/mnhkahn/gogogo/logger"
 	"github.com/nao1215/nameconv"
 )
 
@@ -50,7 +49,7 @@ func (dm *DDLMaker) parseJSON(data string) error {
 		if typeName == "" {
 			continue
 		}
-		logger.Info(k, typeName)
+
 		col := newColumn(nameconv.ToSnakeCase(k), typeName, "", dm.Dialect)
 		cols = append(cols, col)
 	}

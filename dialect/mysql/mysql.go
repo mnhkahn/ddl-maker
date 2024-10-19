@@ -151,7 +151,7 @@ CREATE TABLE {{ .Name }} (
         {{ .ToSQL }},
     {{ end -}}
     {{ .PrimaryKey.ToSQL }}
-) ENGINE={{ .Dialect.Engine }} DEFAULT CHARACTER SET {{ .Dialect.Charset }};
+) ENGINE={{ .Dialect.Engine }} DEFAULT CHARACTER SET {{ .Dialect.Charset }} COMMENT={{.Name}};
 
 `
 }
@@ -171,7 +171,7 @@ func (mysql MySQL) ToSQL(typeName string, size uint64) (string, error) {
 		return "TINYINT unsigned", nil
 	case "uint16", "*uint16":
 		return "SMALLINT unsigned", nil
-	case "uint32", "*uint32":
+	case "uint32", "*uint32", "Number":
 		return "INTEGER unsigned", nil
 	case "uint64", "*uint64":
 		return "BIGINT unsigned", nil

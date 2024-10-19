@@ -35,21 +35,18 @@ type Index interface {
 }
 
 func (dm *DDLMaker) parseJSON(data string) error {
-	// m := make(map[string]interface{}, 10)
 	m := ordered_container.OrderedMap{}
 	err := json.Unmarshal([]byte(data), &m)
 	if err != nil {
 		return err
 	}
-	cols := make([]dialect.Column, 0, len(m))
-	idExists := false
+	cols := make([]dialect.Column, 0, len(m.Values))
+	keyMap := make(map[string]struct{}, len(cols))
 	for _, values := range m.Values {
 		k := values.Key
 		v := values.Value
 		typeName := typeForValue(v, true)
-		if typeName == "id" {
-			idExists = true
-		}
+		keyMap[k] = struct{}{}
 		if typeName == "" {
 			continue
 		}
@@ -57,8 +54,15 @@ func (dm *DDLMaker) parseJSON(data string) error {
 		col := newColumn(nameconv.ToSnakeCase(k), typeName, "", dm.Dialect)
 		cols = append(cols, col)
 	}
-	if !idExists {
-		cols = append(cols, newColumn("id", "int64", "", dm.Dialect))
+	// id 放最前面
+	if _, ok := keyMap["id"]; !ok {
+		cols = append([]dialect.Column{newColumn("id", "int64", "auto", dm.Dialect)}, cols...)
+	}
+	if _, ok := keyMap["create_time"]; !ok {
+		cols = append(cols, newColumn("create_time", "time.Time", "default=CURRENT_TIMESTAMP", dm.Dialect))
+	}
+	if _, ok := keyMap["update_time"]; !ok {
+		cols = append(cols, newColumn("update_time", "time.Time", "default=CURRENT_TIMESTAMP,update=CURRENT_TIMESTAMP", dm.Dialect))
 	}
 	table := newTable("foo", mysql.AddPrimaryKey("id"), nil, cols, nil, dm.Dialect)
 	dm.Tables = append(dm.Tables, table)

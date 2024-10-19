@@ -72,6 +72,10 @@ func (c column) attribute() string {
 		attributes = append(attributes, "DEFAULT")
 		attributes = append(attributes, defaultVal)
 	}
+	if defaultVal, ok := specs["update"]; ok {
+		attributes = append(attributes, "ON UPDATE")
+		attributes = append(attributes, defaultVal)
+	}
 
 	if _, ok := specs["auto"]; ok {
 		attributes = append(attributes, c.dialect.AutoIncrement())
@@ -105,7 +109,7 @@ func (c column) ToSQL() (string, error) {
 
 	sql, err := c.dialect.ToSQL(columnType, size)
 	if err != nil {
-		return "", fmt.Errorf("can not convert struct field to sql: %w", err)
+		return "", fmt.Errorf("can not convert struct field to sql: %s, error is: %w", c.name, err)
 	}
 	attribute := c.attribute()
 

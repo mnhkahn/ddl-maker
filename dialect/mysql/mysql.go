@@ -171,9 +171,9 @@ func (mysql MySQL) ToSQL(typeName string, size uint64) (string, error) {
 		return "TINYINT unsigned", nil
 	case "uint16", "*uint16":
 		return "SMALLINT unsigned", nil
-	case "uint32", "*uint32", "Number":
+	case "uint32", "*uint32":
 		return "INTEGER unsigned", nil
-	case "uint64", "*uint64":
+	case "uint64", "*uint64", "Number":
 		return "BIGINT unsigned", nil
 	case "float32", "*float32":
 		return "FLOAT", nil

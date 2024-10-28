@@ -151,7 +151,7 @@ CREATE TABLE {{ .Name }} (
         {{ .ToSQL }},
     {{ end -}}
     {{ .PrimaryKey.ToSQL }}
-) ENGINE={{ .Dialect.Engine }} DEFAULT CHARACTER SET {{ .Dialect.Charset }} COMMENT={{.Name}};
+) ENGINE={{ .Dialect.Engine }} DEFAULT CHARACTER SET {{ .Dialect.Charset }} COMMENT='comments';
 
 `
 }

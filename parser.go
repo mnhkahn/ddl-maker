@@ -55,7 +55,7 @@ func (dm *DDLMaker) parseJSON(data string) error {
 	}
 	// id 放最前面
 	if _, ok := keyMap["id"]; !ok {
-		cols = append([]dialect.Column{newColumn("id", "int64", "auto", dm.Dialect)}, cols...)
+		cols = append([]dialect.Column{newColumn("id", "uint64", "auto", dm.Dialect)}, cols...)
 	}
 	if _, ok := keyMap["create_time"]; !ok {
 		cols = append(cols, newColumn("create_time", "time.Time", "default=CURRENT_TIMESTAMP", dm.Dialect))

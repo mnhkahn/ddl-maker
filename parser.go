@@ -56,7 +56,6 @@ func (dm *DDLMaker) parseJSON(data string) error {
 
 		if strings.HasSuffix(k, "code") || strings.HasSuffix(k, "no") {
 			idxs = append(idxs, mysql.AddUniqueIndex("uniq_"+k, k))
-			idxs = append(idxs, mysql.AddIndex("idx_create_time", "create_time"))
 		}
 	}
 	// id 放最前面
@@ -72,6 +71,7 @@ func (dm *DDLMaker) parseJSON(data string) error {
 	if _, ok := keyMap["update_time"]; !ok {
 		cols = append(cols, newColumn("update_time", "time.Time", "default=CURRENT_TIMESTAMP,update=CURRENT_TIMESTAMP", dm.Dialect))
 	}
+	idxs = append(idxs, mysql.AddIndex("idx_create_time", "create_time"))
 
 	table := newTable("foo", mysql.AddPrimaryKey("id"), nil, cols, idxs, dm.Dialect)
 	dm.Tables = append(dm.Tables, table)

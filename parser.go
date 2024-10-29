@@ -41,6 +41,7 @@ func (dm *DDLMaker) parseJSON(data string) error {
 	}
 	cols := make([]dialect.Column, 0, len(m.Values))
 	keyMap := make(map[string]struct{}, len(cols))
+	idxs := dialect.Indexes{}
 	for _, values := range m.Values {
 		k := values.Key
 		v := values.Value
@@ -52,10 +53,18 @@ func (dm *DDLMaker) parseJSON(data string) error {
 
 		col := newColumn(nameconv.ToSnakeCase(k), typeName, "", dm.Dialect)
 		cols = append(cols, col)
+
+		if strings.HasSuffix(k, "code") || strings.HasSuffix(k, "no") {
+			idxs = append(idxs, mysql.AddUniqueIndex("uniq_"+k, k))
+			idxs = append(idxs, mysql.AddIndex("idx_create_time", "create_time"))
+		}
 	}
 	// id 放最前面
 	if _, ok := keyMap["id"]; !ok {
-		cols = append([]dialect.Column{newColumn("id", "uint64", "auto", dm.Dialect)}, cols...)
+		cols = append([]dialect.Column{newColumn("id", "uint64", "auto,comment=pk", dm.Dialect)}, cols...)
+	}
+	if _, ok := keyMap["is_deleted"]; !ok {
+		cols = append(cols, newColumn("is_deleted", "uint8", "default=0,comment=0 valid/1 deleted", dm.Dialect))
 	}
 	if _, ok := keyMap["create_time"]; !ok {
 		cols = append(cols, newColumn("create_time", "time.Time", "default=CURRENT_TIMESTAMP", dm.Dialect))
@@ -63,7 +72,8 @@ func (dm *DDLMaker) parseJSON(data string) error {
 	if _, ok := keyMap["update_time"]; !ok {
 		cols = append(cols, newColumn("update_time", "time.Time", "default=CURRENT_TIMESTAMP,update=CURRENT_TIMESTAMP", dm.Dialect))
 	}
-	table := newTable("foo", mysql.AddPrimaryKey("id"), nil, cols, nil, dm.Dialect)
+
+	table := newTable("foo", mysql.AddPrimaryKey("id"), nil, cols, idxs, dm.Dialect)
 	dm.Tables = append(dm.Tables, table)
 
 	return nil

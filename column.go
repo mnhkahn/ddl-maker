@@ -65,7 +65,7 @@ func (c column) attribute() string {
 	if _, ok := specs["null"]; ok {
 		attributes = append(attributes, "NULL")
 	} else {
-		attributes = append(attributes, "NOT NULL")
+		attributes = append(attributes, "NOT NULL") // 默认都加了NOT NULL
 	}
 
 	if defaultVal, ok := specs["default"]; ok {
@@ -80,7 +80,13 @@ func (c column) attribute() string {
 	if _, ok := specs["auto"]; ok {
 		attributes = append(attributes, c.dialect.AutoIncrement())
 	}
-	attributes = append(attributes, fmt.Sprintf(`COMMENT '%s'`, c.Name()))
+
+	if defaultVal, ok := specs["comment"]; ok {
+		attributes = append(attributes, "COMMENT")
+		attributes = append(attributes, fmt.Sprintf(`'%s'`, defaultVal))
+	} else {
+		attributes = append(attributes, fmt.Sprintf(`COMMENT '%s'`, c.Name()))
+	}
 
 	return strings.Join(attributes, " ")
 }
